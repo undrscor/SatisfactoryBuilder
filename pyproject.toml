@@ -1,0 +1,21 @@
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q"
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.black]
+target-version = ['py312']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | data
+  | .venv
+  | migrations
+)
+'''
+
+[tool.coverage.run]
+branch = true
+omit = ['tests/*']
