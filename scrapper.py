@@ -291,10 +291,12 @@ def get_recipes():
             )
 
             # Sort into appropriate category
-            if building_name == "converter":
-                converter_recipes.append(recipe_data)
-            else:
-                recipes.append(recipe_data)
+            # if building_name == "converter":
+            #     converter_recipes.append(recipe_data)
+            # else:
+            #     recipes.append(recipe_data)
+
+            recipes.append(recipe_data)
 
         except Exception as e:
             print(

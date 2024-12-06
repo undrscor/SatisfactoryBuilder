@@ -135,4 +135,5 @@ def ingest_recipes(session, recipes_data: List[CreateRecipe]):
             outputs=recipe_data.outputs,
         )
         recipes[recipe_data.name] = recipe
+
     return recipes

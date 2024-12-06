@@ -72,7 +72,7 @@ def upload():
                     ingredients={
                         ingested_materials[material_name].id: amount
                         for material_name, amount in inputs.items()
-                    },
+                    } or None,
                     outputs={
                         ingested_materials[material_name].id: amount
                         for material_name, amount in outputs.items()
