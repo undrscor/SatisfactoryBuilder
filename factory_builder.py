@@ -1,3 +1,6 @@
+import sys
+import time
+
 import sqlalchemy as sql
 
 from models import (
@@ -15,12 +18,19 @@ def main():
     print("")
     planner = FactoryPlanner()
 
-    # concrete = planner.build_factory("concrete", 60)  # 60/minute
+    concrete = planner.build_factory("concrete", 60)
     # for item in concrete:
     #     print(item, "required: ", concrete[item])
     # print()
 
     plate = planner.build_factory("reinforced iron plate", 10)
+    for _ in range(3):
+        time.sleep(1)
+        sys.stdout.write('.')
+        sys.stdout.flush()
+    time.sleep(1)
+    print("\n")
+
     for item in plate:
         print(item, "required: ", plate[item])
     print()
@@ -29,6 +39,7 @@ def main():
     # for item in concrete:
     #     print(item,"required: ", result[item])
     # print()
+    print("Done!")
 
 
 class FactoryPlanner:
@@ -38,6 +49,17 @@ class FactoryPlanner:
         self.materials_required = {}
 
     def build_factory(self, target_material: str, target_rate: float):
+        # Print the base message without dots
+        sys.stdout.write(f"Starting factory breakdown for {target_material} at {target_rate}/min")
+        sys.stdout.flush()
+
+        # Print the dots with delay
+        for _ in range(3):
+            time.sleep(0.8)
+            sys.stdout.write('.')
+            sys.stdout.flush()
+        print("\n")
+        time.sleep(1)
         target_material = target_material.strip().replace(" ", "_").lower()
         with SessionLocal() as session, session.begin():
             q = sql.select(MaterialModel.id).where(
@@ -57,22 +79,25 @@ class FactoryPlanner:
     def recursive_build(self, material_id: int, rate: float, session):
         # Get recipe and basic info
         recipe_info = self.get_info(material_id, session)
+        material_name = recipe_info[0]["material_name"]
         if not recipe_info:
             # This is a raw material
-            print("this is raw as hell: ", material_id)
+            print("this is raw as hell: ", material_name)
             return
         if len(recipe_info) > 1:
-            print("multiple recipes found, which would you like to use? (type number)")
+            print(f"multiple recipes found for {material_name} (need {rate}/min), which would you like to use? (type number)")
             i = 1
             for potential_recipe in recipe_info:
                 print(
-                    f"{i}: \"{potential_recipe['recipe_name']}\", constructed with {potential_recipe['building_name']}"
+                    f"{i}: \"{potential_recipe['recipe_name']}\", {potential_recipe['output_rate']}/min with {potential_recipe['building_name']}"
                 )
                 i += 1
             chosen_recipe = input()
             recipe = recipe_info[int(chosen_recipe) - 1]
         else:
             recipe = recipe_info[0]
+            print(
+                f"recipe found for {material_name}: {recipe['output_rate']}/min with {recipe['building_name']}")
 
         recipe_multiplier = rate / recipe["output_rate"]
 
@@ -99,18 +124,21 @@ class FactoryPlanner:
             #     ingredient["material_id"],
             #     " at rate: ",
             #     recipe_multiplier * ingredient["rate"],
+            #     print()
             # )
+            time.sleep(1)
             self.recursive_build(
                 ingredient["material_id"],
                 ingredient["rate"] * recipe_multiplier,
                 session,
             )
 
-        print()
+        #print()
 
     def get_info(self, material_id: int, session):
         q = (
             sql.select(
+                MaterialModel.name.label("material_name"),
                 RecipeModel.id.label("recipe_id"),
                 RecipeModel.name.label("recipe_name"),
                 RecipeModel.building_id.label("building_id"),
@@ -127,6 +155,9 @@ class FactoryPlanner:
                 ).join(
                     BuildingModel,
                     RecipeModel.building_id == BuildingModel.id,
+                ).join(
+                    MaterialModel,
+                    M2MRecipeOutputsModel.material_id == MaterialModel.id,
                 )
             )
             .where(M2MRecipeOutputsModel.material_id == material_id)
