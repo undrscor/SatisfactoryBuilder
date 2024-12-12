@@ -37,13 +37,6 @@ def ingest_materials(session, materials_data: List[CreateMaterial]):
     }
 
 
-# new_dict = {}
-# for item in old_dict.items():
-#     new_dict[old_dict_info] = old_dict_key
-# return new_dict
-# return {old_dict_info : old_dict_key for old_dict_key, old_dict_info in old_dict.items()}
-
-
 def ingest_buildings(session, buildings_data: List[CreateBuilding]):
     buildings = {}
     for building_data in buildings_data:
@@ -137,3 +130,11 @@ def ingest_recipes(session, recipes_data: List[CreateRecipe]):
         recipes[recipe_data.name] = recipe
 
     return recipes
+
+
+# learning dicts
+# new_dict = {}
+# for item in old_dict.items():
+#     new_dict[old_dict_info] = old_dict_key
+# return new_dict
+# return {old_dict_info : old_dict_key for old_dict_key, old_dict_info in old_dict.items()}

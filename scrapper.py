@@ -13,7 +13,6 @@ from utils.db import SessionLocal
 base_url = URL("https://satisfactory.wiki.gg/")
 
 
-
 def main():
     pass
 

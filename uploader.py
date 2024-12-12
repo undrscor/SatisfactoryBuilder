@@ -1,7 +1,4 @@
-from sqlalchemy import sql
-
 from ingestor import ingest_buildings, ingest_materials, ingest_recipes
-from models import MaterialModel
 from schemas.building import CreateBuilding
 from schemas.material import CreateMaterial
 from schemas.recipe import CreateRecipe

@@ -7,4 +7,3 @@ class MaterialModel(Model):
     id = sql.Column(sql.Integer, primary_key=True)
     name = sql.Column(sql.String, unique=True)
     #type = sql.Column(sql.String, nullable=True)
-

@@ -31,6 +31,10 @@ def main():
     time.sleep(1)
     print("\n")
 
+    # for item in concrete:
+    #     print(item, "required: ", concrete[item])
+    # print()
+
     for item in plate:
         print(item, "required: ", plate[item])
     print()
